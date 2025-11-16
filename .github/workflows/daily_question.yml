@@ -11,9 +11,9 @@ jobs:
 
     steps:
       - name: Checkout repository
-      - uses: actions/checkout@v3
+        uses: actions/checkout@v3
         with:
-          persist-credentials: false
+          persist-credentials: true   # این خط خیلی مهمه
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -23,18 +23,13 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
-      - name: Run script
+      - name: Run script and save to file
         run: python3 get_question.py > daily_question.txt
 
-      - name: Commit and push result
+      - name: Commit and push
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git add daily_question.txt
-
-          if git diff --cached --quiet; then
-            echo "No changes detected → skipping commit"
-          else
-            git commit -m "Update daily question"
-            git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
-          fi
+          git commit -m "Update daily question" || echo "No changes to commit"
+          git push
