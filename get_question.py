@@ -1,6 +1,6 @@
+# get_question.py
 import random
 
-# نمونه متن تستی؛ بعداً این را با StackOverflow API جایگزین کن
 questions = [
     "How to reverse a list in Python?",
     "What is the difference between list and tuple?",
@@ -9,12 +9,8 @@ questions = [
 
 answer = "Here is a brief answer/explanation for the question."
 
-# انتخاب تصادفی یک سوال
 question = random.choice(questions)
 
-# چاپ خروجی به صورت قابل خواندن
-print("===DAILY_QUESTION_START===")
-print(f"Question: {question}")
-print(f"Answer: {answer}")
-print("===DAILY_QUESTION_END===")
-
+# خروجی را داخل فایل محلی runner
+with open("/tmp/daily_question.txt", "w") as f:
+    f.write(f"Question: {question}\nAnswer: {answer}")
