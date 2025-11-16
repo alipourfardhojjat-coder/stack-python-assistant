@@ -1,18 +1,40 @@
-name: Daily StackOverflow Python Question
+name: Daily Python Questions
 
 on:
   schedule:
-    # هر روز ساعت 10 صبح UTC
-    - cron: '0 10 * * *'
+    - cron: "0 9 * * *"
   workflow_dispatch:
 
 jobs:
   get_question:
     runs-on: ubuntu-latest
-    steps:
-    - name: Checkout repo
-      uses: actions/checkout@v3
 
-    - name: Run Python script
-      run: |
-        python3 get_question.py
+    steps:
+      - name: Checkout repository
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run script
+        run: python3 get_question.py > daily_question.txt
+
+      - name: Commit and push result
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add daily_question.txt
+
+          if git diff --cached --quiet; then
+            echo "No changes detected → skipping commit"
+          else
+            git commit -m "Update daily question"
+            git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
+          fi
