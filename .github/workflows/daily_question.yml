@@ -1,19 +1,15 @@
-name: Daily Python Questions
+name: Daily Python Question
 
 on:
   schedule:
-    - cron: "0 9 * * *"
+    - cron: "0 9 * * *"  # هر روز ساعت 9 صبح UTC
   workflow_dispatch:
 
 jobs:
-  get_question:
+  generate_question:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          persist-credentials: true   # این خط خیلی مهمه
+      - uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -23,13 +19,6 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
-      - name: Run script and save to file
-        run: python3 get_question.py > daily_question.txt
-
-      - name: Commit and push
+      - name: Run Python script
         run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git add daily_question.txt
-          git commit -m "Update daily question" || echo "No changes to commit"
-          git push
+          python3 get_question.py
